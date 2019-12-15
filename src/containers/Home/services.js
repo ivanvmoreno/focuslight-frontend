@@ -11,3 +11,6 @@ export const getTeams = async () => {
     const res = await fetch(`${API_ENDPOINT}/team/all`)
     return await res.json()
 }
+
+export const changeUserStatus = (userId, focused) => 
+    fetch(`${API_ENDPOINT}/user/${userId}/status/?focused=${focused}`, { method: 'post' })

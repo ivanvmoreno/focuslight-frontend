@@ -1,10 +1,13 @@
 import React, { Component } from 'react'
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Container from '../../components/Container'
-import { createGlobalStyle } from 'styled-components'
-import { getUsers, getTeams } from './fetchData'
+import AppBar from '@material-ui/core/AppBar'
+import Toolbar from '@material-ui/core/Toolbar'
+import Typography from '@material-ui/core/Typography'
+import UsersTable from '../../components/UsersTable'
+import CONSTANTS from '../../config/constants.json'
+import styled, { createGlobalStyle } from 'styled-components'
+import { changeUserStatus, getUsers, getTeams } from './services'
+
+const { SITE_TITLE } = CONSTANTS
 
 const GlobalStyle = createGlobalStyle`
     body {
@@ -13,19 +16,34 @@ const GlobalStyle = createGlobalStyle`
     }
 `
 
+const Container = styled.div`
+    margin: 0
+`
+
 export default class Home extends Component {
     state = {
-        teams: {}
+        teams: {},
+        users: {}
     }
 
     async componentDidMount() {
+        this.fetchData()
+    }
+
+    fetchData = async () => {
         const users = await getUsers()
         const teams = await getTeams()
         this.setState({ users, teams })
     }
 
-    renderTeams() {
-
+    onFocusSwitch = async userId => {
+        try {
+            const newStatus = !this.state.users[userId].focused
+            await changeUserStatus(userId, newStatus)
+            await this.fetchData()
+        } catch(err) {
+            console.log('Error updating user status', err)
+        }
     }
 
     render() {
@@ -36,10 +54,14 @@ export default class Home extends Component {
                     <AppBar position="static">
                         <Toolbar>
                             <Typography variant="h6">
-                                focused.works
+                                { SITE_TITLE }
                             </Typography>
                         </Toolbar>    
                     </AppBar>
+                    <UsersTable 
+                        users={this.state.users}
+                        onFocusSwitch={this.onFocusSwitch}
+                    />
                 </Container>
             </>
         )

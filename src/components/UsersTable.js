@@ -1,65 +1,71 @@
 import React from 'react'
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
+import Table from '@material-ui/core/Table'
+import TableBody from '@material-ui/core/TableBody'
+import TableCell from '@material-ui/core/TableCell'
+import TableHead from '@material-ui/core/TableHead'
+import TableRow from '@material-ui/core/TableRow'
+import Switch from '@material-ui/core/Switch'
+import UserInfoExpanded from './UserInfoExpanded'
 import PropTypes from 'prop-types'
 
 const COLUMNS = [
     {
-        id: 'focus-toggle',
-        label: '',
-        field: 'focused'
-    },
-    {
         id: 'user-name',
         label: 'Name',
-        field: 'name'
+        field: 'name',
+        format: ({ name: { first, last } }) => <UserInfoExpanded first={first} last={last} />
     },
     {
         id: 'user-email',
         label: 'Email',
-        field: 'email'
+        field: 'email',
+        format: ({ email }) => email
     },
     {
         id: 'user-team',
         label: 'Team',
-        field: 'team'
+        field: 'team',
+        format: ({ team }) => team
     },
 ]
 
-const UsersTable = ({ users }) => {
+const UsersTable = ({ users, onFocusSwitch }) => {
     return (
         <Table stickyHeader>
           <TableHead>
             <TableRow>
+                <TableCell key="focus-switch" />
                 {COLUMNS.map(col => (
-                    <TableCell
-                        key={col.id}
-                    >
+                    <TableCell key={col.id}>
                         {col.label}
                     </TableCell>
                 ))}
             </TableRow>
           </TableHead>
           <TableBody>
-            {users.map(user => (
-                <TableRow hover tabIndex={-1} key={user.id}>
-                    COLUMNS.map(col => (
+            {Object.entries(users).map(([id, user]) => (
+                <TableRow hover tabIndex={-1} key={id}>
+                    <TableCell key="focus-switch">
+                        <Switch 
+                            checked={user.focused}
+                            onChange={() => onFocusSwitch(id)}
+                        />
+                    </TableCell>
+                    {COLUMNS.map(col => (
                         <TableCell key={col.id}>
-                            {user[col.field]}
+                            {col.format(user)}
                         </TableCell>
-                    ))
+                    ))}
                 </TableRow>
-              ))}
+            ))}
           </TableBody>
         </Table>
     )
 }
 
 UsersTable.propTypes = {
-    users: PropTypes.arrayOf(PropTypes.object),
+    users: PropTypes.objectOf(PropTypes.object),
+    onFocusSwitch: PropTypes.func.isRequired
 }
 
 export default UsersTable
