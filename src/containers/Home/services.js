@@ -3,7 +3,7 @@ import CONSTANTS from '../../config/constants.json'
 const { API_ENDPOINT } = CONSTANTS
 
 export const getUsers = async () => {
-    const res = await fetch(`${API_ENDPOINT}/user/all`)
+    const res = await fetch(`${API_ENDPOINT}/user/all/?expand=team`)
     return await res.json()
 }
 

@@ -60,6 +60,7 @@ export default class Home extends Component {
                     </AppBar>
                     <UsersTable 
                         users={this.state.users}
+                        teams={this.state.teams}
                         onFocusSwitch={this.onFocusSwitch}
                     />
                 </Container>

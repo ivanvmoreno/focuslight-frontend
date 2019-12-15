@@ -25,11 +25,11 @@ const COLUMNS = [
         id: 'user-team',
         label: 'Team',
         field: 'team',
-        format: ({ team }) => team
+        format: ({ team: userTeam }, teams) => teams[userTeam].name
     },
 ]
 
-const UsersTable = ({ users, onFocusSwitch }) => {
+const UsersTable = ({ users, teams, onFocusSwitch }) => {
     return (
         <Table stickyHeader>
           <TableHead>
@@ -53,7 +53,7 @@ const UsersTable = ({ users, onFocusSwitch }) => {
                     </TableCell>
                     {COLUMNS.map(col => (
                         <TableCell key={col.id}>
-                            {col.format(user)}
+                            {col.format(user, teams)}
                         </TableCell>
                     ))}
                 </TableRow>
